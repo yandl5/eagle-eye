@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Eagle-Eye News</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      color: #222;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 8px 12px;
+      margin-right: 5px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      font-size: 18px;
+      line-height: 1.4;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .trending {
+      font-weight: bold;
+      color: #d9534f;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔎 Eagle-Eye News</h1>
+  <form id="searchForm">
+    <input type="text" id="query" placeholder="Digite um termo, ex: npm" required>
+    <button type="submit">Buscar</button>
+  </form>
+
+  <ul id="results"></ul>
+
+  <script>
+    document.getElementById("searchForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const query = document.getElementById("query").value;
+      const res = await fetch(`/search?q=${query}`);
+      const data = await res.json();
+
+      const resultsEl = document.getElementById("results");
+      resultsEl.innerHTML = "";
+
+      if (data.results) {
+        data.results.forEach(r => {
+          const li = document.createElement("li");
+
+          // Se a notícia for trending, destaque
+          if (r.startsWith("[TRENDING]")) {
+            li.innerHTML = `<span class="trending">${r.split("->")[0]}</span> 
+                            <a href="${r.split("->")[1].trim()}" target="_blank">[Ler mais]</a>`;
+          } else {
+            const [titlePart, linkPart] = r.split("->");
+            li.innerHTML = `${titlePart.trim()} 
+                            <a href="${linkPart.trim()}" target="_blank">[Ler mais]</a>`;
+          }
+
+          resultsEl.appendChild(li);
+        });
+      } else {
+        resultsEl.innerHTML = `<li>Erro: ${data.error}</li>`;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+feedparser
+python-dateutil
+spyne
+waitress
+zeep
+requests
+lxml

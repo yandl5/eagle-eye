@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  soap-service:
+    build: ./
+    ports:
+      - "8000:8000"
+
+  web-client:
+    build: ./cliente/
+    ports:
+      - "5000:5000"
+    depends_on:
+      - soap-service
